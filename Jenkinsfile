@@ -15,7 +15,7 @@ properties([
         triggers: [
             [
                 $class: 'jenkins.triggers.ReverseBuildTrigger',
-                upstreamProjects: "../Docker-base-debian-python3/job/master", threshold: hudson.model.Result.SUCCESS
+                upstreamProjects: "../acctest-python3-os/job/master", threshold: hudson.model.Result.SUCCESS
             ]
         ]
     ])
