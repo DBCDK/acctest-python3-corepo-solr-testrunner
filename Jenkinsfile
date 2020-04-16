@@ -49,7 +49,7 @@ pipeline {
                 }
                 script {
                     sh " rm -rf copyright.txt deb_dist/ dist/ *.tar.gz *.egg-info "
-                    sh " apt-install python3-os-dbc "
+                    sh " apt-install python3-os-dbc python3-acceptance-tester-dbc "
                     sh " python3 setup.py nosetests --with-xunit "
                     sh " python3 setup.py --no-user-cfg --command-packages=stdeb.command sdist_dsc --debian-version=${env.BUILD_NUMBER} --verbose --copyright-file copyright.txt -z stable "
                     sh '''
