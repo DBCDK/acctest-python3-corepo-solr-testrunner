@@ -69,10 +69,18 @@ class TestResourceManager( unittest.TestCase ):
         ResourceManager._secure_artifact = mock_secure
         ResourceManager._populate_dbnames = mock_populate_dbnames
 
+        com_mock = Mock()
+        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
+        com_mock.returncode = 0
+        org_sp = subprocess.Popen
+        subprocess.Popen = Mock( return_value=com_mock )
+
         #test
         resource_folder = os.path.join( self.test_folder, "resources" )
         self.assertFalse( os.path.exists( resource_folder ) )
         rm = ResourceManager( resource_folder, self.tests, False, mock_use_config() )
+        subprocess.Popen = org_sp
+
         #self.assertTrue( os.path.exists( "/FOO" ) )
         self.assertTrue( os.path.exists( resource_folder ) )
 
@@ -83,11 +91,18 @@ class TestResourceManager( unittest.TestCase ):
         ResourceManager._secure_artifact = mock_secure
         ResourceManager._populate_dbnames = mock_populate_dbnames
 
+        com_mock = Mock()
+        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
+        com_mock.returncode = 0
+        org_sp = subprocess.Popen
+        subprocess.Popen = Mock( return_value=com_mock )
+
         #test
         resource_folder = os.path.join( self.test_folder, "resources" )
         os.mkdir( resource_folder )
         self.assertTrue( os.path.exists( resource_folder ) )
         rm = ResourceManager( resource_folder, self.tests, False, mock_use_config() )
+        subprocess.Popen = org_sp
         self.assertTrue( os.path.exists( resource_folder ) )
 
     def test_iserver_used_when_failing_to_find_preloaded_artifact( self ):
@@ -130,9 +145,17 @@ class TestResourceManager( unittest.TestCase ):
         f.write( 'd41d8cd98f00b204e9800998ecf8427e' )
         f.close()
 
+        com_mock = Mock()
+        com_mock.communicate.return_value = ( '<stdout>', '<stderr>' )
+        com_mock.returncode = 0
+        org_sp = subprocess.Popen
+        subprocess.Popen = Mock( return_value=com_mock )
+
         use_preloaded_resources = True
 
         rm = ResourceManager( resource_folder, self.tests, use_preloaded_resources, mock_use_config() )
+
+        subprocess.Popen = org_sp
 
         self.assertEqual( iserver_pickup, None )
 
