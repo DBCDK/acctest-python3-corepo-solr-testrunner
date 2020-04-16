@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This file is part of opensearch.
+  Copyright © 2009, Dansk Bibliotekscenter a/s,
+  Tempovej 7-11, DK-2750 Ballerup, Denmark. CVR: 15149043
+
+  opensearch is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  opensearch is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with opensearch.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!-- xsd documenting how to utilize the solr wrapper in test-scenarios. -->
+
+<xsd:schema targetNamespace="http://dbc.dk/xml/namespaces/solr"
+            xmlns="http://dbc.dk/xml/namespaces/solr"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+  <xsd:element name="solr">
+    <xsd:annotation>
+      <xsd:documentation>
+        Solr setup.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:simpleContent>
+        <xsd:extension base="xsd:string">
+          <xsd:attribute name="type" use="required" type="solrTypeType"/>
+        </xsd:extension>
+      </xsd:simpleContent>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="idimport">
+    <xsd:annotation>
+      <xsd:documentation>
+        The idimport element must contain one or more children of
+        type idType, one for each id to be imported.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        <xsd:element name="id" type="idType"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="serverimport">
+    <xsd:annotation>
+      <xsd:documentation>
+        Perform server mode import.
+      </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="search">
+    <xsd:annotation>
+      <xsd:documentation>
+        The search element searches the solr index for terms given in the
+        string attribute, testing the number of returned hits against the
+        value specified in the optional expected attribute and testing ids
+        of returned records against the (possibly empty) list of children
+        of type idType.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:choice>
+          <xsd:element name="id" type="idType"/>
+          <xsd:element name="field" type="idType"/>
+        </xs:choice>
+      </xsd:sequence>
+      <xsd:attribute name="string" use="required" type="xsd:string"/>
+      <xsd:attribute name="field" type="xsd:string"/>
+      <xsd:attribute name="expected" type="xsd:integer"/>
+      <xsd:attribute name="values" type="xsd:integer"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="solrTypeType">
+    <xsd:annotation>
+      <xsd:documentation>
+        The 'solrTypeType' can be either 'normal', 'nonresponsive', \todo: finish list of solr types...
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="normal"/>
+      <xsd:enumeration value="nonresponsive"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="idType">
+    <xsd:attribute name="value" use="required" type="xsd:string"/>
+  </xsd:complexType>
+
+</xsd:schema>
