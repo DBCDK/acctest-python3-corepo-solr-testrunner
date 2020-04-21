@@ -310,7 +310,6 @@ class ResourceManager( AbstractResourceManager ):
         if result.returncode != 0:
             die("Something went during maven call %s" % stdout.decode("utf-8") + stderr.decode("utf-8"))
 
-
     def shutdown(self):
         self.container_pool.shutdown()
 
