@@ -83,7 +83,7 @@ class TestRunner( AbstractTestRunner ):
             solr_doc_store_monitor_ip = "http://%s:8080" % solr_doc_store_monitor.get_ip()
             opensearch_connector = OpenSearch("http://%s/opensearch/" % opensearch.get_ip())
 
-            ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest-1.1-SNAPSHOT.jar')
+            ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest.jar')
             corepo_connector = Corepo(corepo_db, corepo_content_service, ingest_tool, os.path.join(build_folder, 'ingest'))
 
             openagency_connector = OpenAgencyMock("http://%s:8080" % wiremock.get_ip(), proxy="https://openagency.addi.dk/test_2.34/")
