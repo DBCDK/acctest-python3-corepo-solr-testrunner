@@ -57,7 +57,7 @@ class ContainerPoolImpl(ContainerSuitePool):
         corepo_db.waitFor("database system is ready to accept connections")
 
         # Migrate corepo before starting services
-        ingest_tool = os.path.join(self.resource_folder, 'corepo-ingest-1.1-SNAPSHOT.jar')
+        ingest_tool = os.path.join(self.resource_folder, 'corepo-ingest.jar')
         exe_cmd = ["java", "-jar", ingest_tool, "--db=%s"%corepo_db_url, "--allow-fail", "--debug"]
 
         logger.debug( "Execute ingest to migrate: %s"%' '.join( exe_cmd ) )
