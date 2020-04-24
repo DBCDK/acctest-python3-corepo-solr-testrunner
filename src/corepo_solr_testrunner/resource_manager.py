@@ -62,7 +62,7 @@ class ContainerPoolImpl(ContainerSuitePool):
 
         logger.debug( "Execute ingest to migrate: %s"%' '.join( exe_cmd ) )
 
-        result = subprocess.Popen(exe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.Popen(exe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, encoding="utf-8")
         stdout, stderr = result.communicate()
         if result.returncode != 0:
             die("Something went during ingest call %s" % stdout + stderr)
