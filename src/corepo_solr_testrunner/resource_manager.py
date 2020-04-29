@@ -204,9 +204,10 @@ class ContainerPoolImpl(ContainerSuitePool):
             container.start()
 
         opensearch = suite.create_container("opensearch",
-                                            image_name=DockerContainer.secure_docker_image('opensearch-4.5'),
+                                            image_name=DockerContainer.secure_docker_image('opensearch-webservice-5.2', tag='311'),
                                             name="opensearch" + suite_name,
-                                            environment_variables={"FEDORA":"",
+                                            environment_variables={"AAA_IP_LIST": "0.0.0.0-255.255.255.255",
+                                                                   "AAA_FORS_RIGHTS": "",
                                                                    "AGENCY_PROFILE_FALLBACK": "test",
                                                                    "AGENCY_FALLBACK": 100200,
                                                                    "AGENCY_END_POINT": "http://openagency.addi.dk/test_2.34/",
@@ -215,9 +216,11 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                    "HOLDINGS_ITEMS_INDEX": "",
                                                                    "RAW_RECORD_SOLR": "",
                                                                    "RAW_RECORD_CONTENT_SERVICE": "",
+                                                                   "URL_PATH": "opensearch",
                                                                    "HOLDINGS_DB": "",
                                                                    "VERBOSE_LEVEL": "TRACE+WARNING+ERROR+FATAL+STAT+TIMER",
-                                                                   "OPEN_FORMAT": ""},
+                                                                   "OPEN_FORMAT": "",
+                                                                   "OLD_OPEN_FORMAT": ""},
                                             start_timeout=1200)
         # TODO upgrade to 5.0. Needs IP authentication_error fix to work
         #opensearch = suite.create_container("opensearch",
