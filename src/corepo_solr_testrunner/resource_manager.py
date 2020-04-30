@@ -222,32 +222,6 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                    "OPEN_FORMAT": "",
                                                                    "OLD_OPEN_FORMAT": ""},
                                             start_timeout=1200)
-        # TODO upgrade to 5.0. Needs IP authentication_error fix to work
-        #opensearch = suite.create_container("opensearch",
-                                            #image_name=DockerContainer.secure_docker_image('opensearch-webservice-5.0'),
-                                            #name="opensearch" + suite_name,
-                                            #environment_variables={"AAA_IP_RIGHTS_BLOCK": "aaa_ip_rights[dbc][ip_list] = 0.0.0.0-255.255.255.255 aaa_ip_rights[dbc][ressource][opensearch] = 500",
-                                                                   #"AGENCY_CACHE_SETTINGS": "",
-                                                                   #"AGENCY_END_POINT": "https://openagency.addi.dk/test_2.34/",
-                                                                   #"AGENCY_FALLBACK": 100200,
-                                                                   #"AGENCY_PROFILE_FALLBACK": "test",
-                                                                   #"CACHE_SETTINGS": "",
-                                                                   #"FEDORA": "http://%s:8080/rest/" % corepo_content_service_ip,
-                                                                   #"HOLDINGS_DB": "",
-                                                                   #"HOLDINGS_ITEMS_INDEX": "",
-                                                                   #"MY_DOMAIN_IP_LIST": "0.0.0.0-255.255.255.255",
-                                                                   #"NETPUNKT_OPEN_FORMAT": "http://php-openformat-prod.mcp1-proxy.dbc.dk/server.php",
-                                                                   #"OPEN_FORMAT": "http://openformat.addi.dk/0.2/",
-                                                                   #"RAW_RECORD_CONTENT_SERVICE": "http://content-service.rawrepo.fbstest.mcp1.dbc.dk/RawRepoContentService",
-                                                                   #"RAW_RECORD_REPOSITORY_NAME": "raw_repo_ext_test",
-                                                                   #"RAW_RECORD_SOLR": "http://fbstest:8983/solr/fbstest-rawrepo-searcher/select",
-                                                                   #"REPOSITORY_NAME": "external_test",
-                                                                   #"SERVICE_LOCATION": "",
-                                                                   #"SOLR": "http://%s:8983/solr/corepo/select" % corepo_solr_ip,
-                                                                   #"URL_PATH": "fbstest",
-                                                                   #"USE_HOLDING_BLOCK_JOIN": "CHECK",
-                                                                   #"VERBOSE_LEVEL": "WARNING+ERROR+FATAL+STAT+TIMER+TRACE+DEBUG"},
-                                            #start_timeout=1200)
         opensearch.start()
 
         # Looking for e.g.
