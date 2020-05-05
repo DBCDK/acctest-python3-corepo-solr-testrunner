@@ -204,7 +204,7 @@ class ContainerPoolImpl(ContainerSuitePool):
             container.start()
 
         opensearch = suite.create_container("opensearch",
-                                            image_name=DockerContainer.secure_docker_image('opensearch-webservice-5.2', tag='311'),
+                                            image_name=DockerContainer.secure_docker_image('opensearch-webservice-5.2'),
                                             name="opensearch" + suite_name,
                                             environment_variables={"AAA_IP_LIST": "0.0.0.0-255.255.255.255",
                                                                    "AAA_FORS_RIGHTS": "",
