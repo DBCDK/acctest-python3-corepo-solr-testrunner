@@ -120,6 +120,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   #"LOG_LEVEL": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                   "MAX_POOL_SIZE": "2",
+                                                                                  "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-staging.svc.cloud.dbc.dk/1.0/api/",
                                                                                   "OPEN_AGENCY_URL": open_agency_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
@@ -193,6 +194,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   "SOLR_URL": "http://%s:8983/solr/corepo" % corepo_solr_ip,
                                                                                   "LOG__dk_dbc": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
+                                                                                  "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-staging.svc.cloud.dbc.dk/1.0/api/",
                                                                                   "OPEN_AGENCY_URL": open_agency_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
