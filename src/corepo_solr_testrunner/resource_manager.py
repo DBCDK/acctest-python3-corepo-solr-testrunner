@@ -104,7 +104,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                         image_name=DockerContainer.secure_docker_image('corepo-content-service-1.2'),
                                                         name="corepo-content-service" + suite_name,
                                                         environment_variables={"COREPO_POSTGRES_URL": corepo_db_url,
-                                                                               "OPEN_AGENCY_URL": open_agency_url,
+                                                                               "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/1.0/api/",
                                                                                "LOG__dk_dbc": "TRACE",
                                                                                "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
