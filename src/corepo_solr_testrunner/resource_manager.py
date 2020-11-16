@@ -30,6 +30,7 @@ from configobj import ConfigObj
 sys.path.insert( 0, os.path.dirname( os.path.dirname( os.path.dirname( os.path.realpath( sys.argv[0] ) ) ) ) )
 from acceptance_tester.abstract_testsuite_runner.resource_manager import AbstractResourceManager
 from os_python.wiremock_helper import wiremock_load_rules_from_dir
+from os_python.wiremock_helper import wiremock_load_vipcore_from_dir
 
 ### define logger
 logger = logging.getLogger( "dbc."+__name__ )
@@ -97,14 +98,22 @@ class ContainerPoolImpl(ContainerSuitePool):
         wiremock.start()
         open_agency_url = "http://%s:8080" % wiremock.get_ip()
 
+        vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
+                             name="vipcore" + suite_name,
+                             start_timeout=1200)
+        vipcore.start()
+        vip_url = "http://%s:8080" % vipcore.get_ip()
+
         wiremock.waitFor("verbose:")
+        vipcore.waitFor("verbose:")
         wiremock_load_rules_from_dir("http://%s:8080" % wiremock.get_ip(), self.resource_folder)
+        wiremock_load_vipcore_from_dir("http://%s:8080" % vipcore.get_ip(), self.resource_folder)
 
         corepo_content_service = suite.create_container("corepo-content-service",
                                                         image_name=DockerContainer.secure_docker_image('corepo-content-service-1.2'),
                                                         name="corepo-content-service" + suite_name,
                                                         environment_variables={"COREPO_POSTGRES_URL": corepo_db_url,
-                                                                               "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/1.0/api/",
+                                                                               "VIPCORE_ENDPOINT": vip_url,
                                                                                "LOG__dk_dbc": "TRACE",
                                                                                "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                "PAYARA_STARTUP_TIMEOUT": 1200},
@@ -120,8 +129,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   #"LOG_LEVEL": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                   "MAX_POOL_SIZE": "2",
-                                                                                  "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/1.0/api/",
-                                                                                  #"VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-staging.svc.cloud.dbc.dk/v1/api/",
+                                                                                  "VIPCORE_ENDPOINT": vip_url,
                                                                                   "OPEN_AGENCY_URL": open_agency_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
@@ -170,7 +178,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                 "OPEN_AGENCY_URL": open_agency_url,
                                                                                 "SEARCH_PATH": "file:/javascriptlocal file:/javascript file:/javascript/standard-index-values",
                                                                                 "QUEUES": "to-indexer",
-                                                                                "EMPTY_QUEUE_SLEEP": "10s",
+                                                                                "EMPTY_QUEUE_SLEEP": "1s",
                                                                                 "LOG__dk_dbc": log_level,
                                                                                 "LOG__JavaScript_Logger": log_level,
                                                                                 "JAVA_MAX_HEAP_SIZE": "2G",
@@ -184,7 +192,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                            name="solr-doc-store-updater" + suite_name,
                                                            environment_variables={"SOLR_DOC_STORE_URL": solr_doc_store_url,
                                                                                   "SOLR_DOC_STORE_DATABASE": sds_db_url,
-                                                                                  "EMPTY_QUEUE_SLEEP": "2500ms",
+                                                                                  "EMPTY_QUEUE_SLEEP": "1000ms",
                                                                                   "QUEUES": "to-solr",
                                                                                   "COLLECTION": "updater",
                                                                                   "PROFILE_SERVICE_URL": "",
@@ -195,8 +203,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   "SOLR_URL": "http://%s:8983/solr/corepo" % corepo_solr_ip,
                                                                                   "LOG__dk_dbc": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
-                                                                                  "VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-extern-test.svc.cloud.dbc.dk/v1/api/",
-                                                                                  #"VIPCORE_ENDPOINT": "http://vipcore.iscrum-vip-staging.svc.cloud.dbc.dk/v1/api/",
+                                                                                  "VIPCORE_ENDPOINT": vip_url,
                                                                                   "OPEN_AGENCY_URL": open_agency_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
@@ -260,7 +267,6 @@ class ContainerPoolImpl(ContainerSuitePool):
             url = "http://%s:8080/api/evict-all" % container.get_ip()
             logger.debug(requests.get(url))
 
-
 class ResourceManager( AbstractResourceManager ):
 
     def __init__( self, resource_folder, tests, use_preloaded, use_config, port_range=( 11000, 12000 )):
@@ -274,7 +280,7 @@ class ResourceManager( AbstractResourceManager ):
 
         self.container_pool = ContainerPoolImpl(self.resource_folder, self.resource_config)
 
-        self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
+        self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules'], 'wiremock-vipcore': ['wiremock-vipcore.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
         for artifact in self.required_artifacts:
             self.required_artifacts[artifact].append(self._secure_artifact(artifact, *self.required_artifacts[artifact]))
 
