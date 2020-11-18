@@ -72,6 +72,7 @@ class TestRunner( AbstractTestRunner ):
             solr_doc_store_monitor = container_suite.get("solr-doc-store-monitor", build_folder)
             opensearch = container_suite.get("opensearch", build_folder)
             wiremock = container_suite.get("wiremock", build_folder)
+            vipcore = container_suite.get("vipcore", build_folder)
             corepo_db = container_suite.get("corepo-db", build_folder)
 
             gdih = SolrDockerGDIH(corepo_db)
