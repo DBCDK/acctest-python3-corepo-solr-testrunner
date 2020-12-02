@@ -221,7 +221,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                    "AAA_FORS_RIGHTS": "",
                                                                    "AGENCY_PROFILE_FALLBACK": "test",
                                                                    "AGENCY_FALLBACK": 100200,
-                                                                   "AGENCY_END_POINT": "http://openagency.addi.dk/test_2.34/",
+                                                                   "VIPCORE_ENDPOINT": vip_url,
                                                                    "FEDORA": "http://%s:8080/rest/objects/" % corepo_content_service_ip,
                                                                    "SOLR": "http://%s:8983/solr/corepo/select" % corepo_solr_ip,
                                                                    "HOLDINGS_ITEMS_INDEX": "",
