@@ -21,17 +21,13 @@ from os_python.common.utils.cleanupstack import CleanupStack
 from acceptance_tester.abstract_testsuite_runner.test_runner import TestRunner as AbstractTestRunner
 
 from os_python.solr.solr_parser import SolrParser
-from os_python.opensearch_parser import OpenSearchParser
 from os_python.solr.solr_gdih_parser import SolrGDIHParser
 from os_python.solr.solr_doc_store import SolrDocStore
-from os_python.openagency_parser import OpenAgencyParser
 from os_python.corepo.corepo import Corepo
 from os_python.corepo.corepo_parser import CorepoParser
 from os_python.solr.solr_docker_gdih import SolrDockerGDIH
 from os_python.connectors.solr import Solr
-from os_python.connectors.opensearch import OpenSearch
 from os_python.connectors.corepo import CorepoContentService
-from os_python.connectors.openagency_mock import OpenAgencyMock
 
 ### define logger
 logger = logging.getLogger( "dbc." + __name__ )
@@ -70,8 +66,6 @@ class TestRunner( AbstractTestRunner ):
             corepo_content_service = container_suite.get("corepo-content-service", build_folder)
             corepo_solr = container_suite.get("corepo-solr", build_folder)
             solr_doc_store_monitor = container_suite.get("solr-doc-store-monitor", build_folder)
-            opensearch = container_suite.get("opensearch", build_folder)
-            wiremock = container_suite.get("wiremock", build_folder)
             vipcore = container_suite.get("vipcore", build_folder)
             corepo_db = container_suite.get("corepo-db", build_folder)
 
@@ -82,20 +76,15 @@ class TestRunner( AbstractTestRunner ):
             # connectors
             solr_connector = Solr(solr_url, build_folder)
             solr_doc_store_monitor_ip = "http://%s:8080" % solr_doc_store_monitor.get_ip()
-            opensearch_connector = OpenSearch("http://%s/opensearch/" % opensearch.get_ip())
 
             ingest_tool = os.path.join(resource_manager.resource_folder, 'corepo-ingest.jar')
             corepo_connector = Corepo(corepo_db, corepo_content_service, ingest_tool, os.path.join(build_folder, 'ingest'))
-
-            openagency_connector = OpenAgencyMock("http://%s:8080" % wiremock.get_ip(), proxy="https://openagency.addi.dk/test_2.34/")
 
             ### Setup parsers
             parsers = []
             parsers.append(CorepoParser(self.base_folder, corepo_connector))
             parsers.append(SolrParser(self.base_folder, solr_connector))
             parsers.append(SolrGDIHParser(self.base_folder, gdih, solr_connector, SolrDocStore(solr_doc_store_monitor_ip)))
-            parsers.append(OpenSearchParser(self.base_folder, opensearch_connector))
-            parsers.append(OpenAgencyParser(openagency_connector))
             for parser in parsers:
                 self.parser_functions.update(parser.parser_functions)
 

@@ -29,7 +29,6 @@ from configobj import ConfigObj
 
 sys.path.insert( 0, os.path.dirname( os.path.dirname( os.path.dirname( os.path.realpath( sys.argv[0] ) ) ) ) )
 from acceptance_tester.abstract_testsuite_runner.resource_manager import AbstractResourceManager
-from os_python.wiremock_helper import wiremock_load_rules_from_dir
 from os_python.wiremock_helper import wiremock_load_vipcore_from_dir
 
 ### define logger
@@ -92,21 +91,13 @@ class ContainerPoolImpl(ContainerSuitePool):
         corepo_solr.start()
         corepo_solr_ip = corepo_solr.get_ip()
 
-        wiremock = suite.create_container("wiremock", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
-                             name="wiremock" + suite_name,
-                             start_timeout=1200)
-        wiremock.start()
-        open_agency_url = "http://%s:8080" % wiremock.get_ip()
-
         vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
                              name="vipcore" + suite_name,
                              start_timeout=1200)
         vipcore.start()
         vip_url = "http://%s:8080" % vipcore.get_ip()
 
-        wiremock.waitFor("verbose:")
         vipcore.waitFor("verbose:")
-        wiremock_load_rules_from_dir("http://%s:8080" % wiremock.get_ip(), self.resource_folder)
         wiremock_load_vipcore_from_dir("http://%s:8080" % vipcore.get_ip(), self.resource_folder)
 
         corepo_content_service = suite.create_container("corepo-content-service",
@@ -129,8 +120,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   #"LOG_LEVEL": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
                                                                                   "MAX_POOL_SIZE": "2",
-                                                                                  "VIPCORE_ENDPOINT": vip_url,
-                                                                                  "OPEN_AGENCY_URL": open_agency_url},
+                                                                                  "VIPCORE_ENDPOINT": vip_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
 
@@ -175,7 +165,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                 "COREPO_POSTGRES_URL": corepo_db_url,
                                                                                 "SOLR_DOC_STORE_URL": solr_doc_store_url,
                                                                                 "FORS_RIGHTS_URL": "http://localhost/forsRights/",
-                                                                                "OPEN_AGENCY_URL": open_agency_url,
+                                                                                "VIPCORE_ENDPOINT": vip_url,
                                                                                 "SEARCH_PATH": "file:/javascriptlocal file:/javascript file:/javascript/standard-index-values",
                                                                                 "QUEUES": "to-indexer",
                                                                                 "EMPTY_QUEUE_SLEEP": "1s",
@@ -203,8 +193,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   "SOLR_URL": "http://%s:8983/solr/corepo" % corepo_solr_ip,
                                                                                   "LOG__dk_dbc": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
-                                                                                  "VIPCORE_ENDPOINT": vip_url,
-                                                                                  "OPEN_AGENCY_URL": open_agency_url},
+                                                                                  "VIPCORE_ENDPOINT": vip_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
 
@@ -214,34 +203,11 @@ class ContainerPoolImpl(ContainerSuitePool):
         for container in [solr_doc_store_updater, corepo_indexer_worker]:
             container.start()
 
-        opensearch = suite.create_container("opensearch",
-                                            image_name=DockerContainer.secure_docker_image('opensearch-webservice-5.2'),
-                                            name="opensearch" + suite_name,
-                                            environment_variables={"AAA_IP_LIST": "0.0.0.0-255.255.255.255",
-                                                                   "AAA_FORS_RIGHTS": "",
-                                                                   "AGENCY_PROFILE_FALLBACK": "test",
-                                                                   "AGENCY_FALLBACK": 100200,
-                                                                   "VIPCORE_ENDPOINT": vip_url,
-                                                                   "FEDORA": "http://%s:8080/rest/objects/" % corepo_content_service_ip,
-                                                                   "SOLR": "http://%s:8983/solr/corepo/select" % corepo_solr_ip,
-                                                                   "HOLDINGS_ITEMS_INDEX": "",
-                                                                   "RAW_RECORD_SOLR": "",
-                                                                   "RAW_RECORD_CONTENT_SERVICE": "",
-                                                                   "URL_PATH": "opensearch",
-                                                                   "HOLDINGS_DB": "",
-                                                                   "VERBOSE_LEVEL": "TRACE+WARNING+ERROR+FATAL+STAT+TIMER",
-                                                                   "OPEN_FORMAT": "",
-                                                                   "OLD_OPEN_FORMAT": ""},
-                                            start_timeout=1200)
-        opensearch.start()
-
         # Looking for e.g.
         #INFO: Payara Server  5.181 #badassfish (213) startup time : Felix (2,110ms), startup services(9,965ms), total(12,075ms)
-
         for container in [corepo_indexer_worker, solr_doc_store_updater]:
             container.waitFor("Instance Configuration")
 
-        opensearch.waitFor("resuming normal operations")
 
     def on_release(self, name, container):
         logger.debug("Releasing %s on container %s" % (name, container))
@@ -280,7 +246,7 @@ class ResourceManager( AbstractResourceManager ):
 
         self.container_pool = ContainerPoolImpl(self.resource_folder, self.resource_config)
 
-        self.required_artifacts = {'wiremock-rules-openagency': ['wiremock-rules-openagency.zip', 'os-wiremock-rules'], 'wiremock-vipcore': ['wiremock-vipcore.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
+        self.required_artifacts = {'wiremock-vipcore': ['wiremock-vipcore.zip', 'os-wiremock-rules'], 'corepo-ingest': ['corepo-ingest.jar', 'corepo/job/master']}
         for artifact in self.required_artifacts:
             self.required_artifacts[artifact].append(self._secure_artifact(artifact, *self.required_artifacts[artifact]))
 
