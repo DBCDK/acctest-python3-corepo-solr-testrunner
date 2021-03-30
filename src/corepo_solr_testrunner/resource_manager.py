@@ -77,7 +77,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                         environment_variables={"POSTGRES_USER": "sds",
                                                                "POSTGRES_PASSWORD": "sds",
                                                                "POSTGRES_DB": "sds",
-                                                               "SOLR_DOC_STORE_QUEUE_NAMES": "to-solr"},
+                                                               "SOLR_DOC_STORE_QUEUES": "manifestation|to-solr|0,manifestation_delete|to-solr|0"},
                                         
                              start_timeout=1200)
         sds_db.start()
