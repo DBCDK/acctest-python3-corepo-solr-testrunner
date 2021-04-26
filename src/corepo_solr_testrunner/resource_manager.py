@@ -101,8 +101,6 @@ class ContainerPoolImpl(ContainerSuitePool):
         work_presentation_url = "http://%s:8080" % work_presentation.get_ip()
 
         work_presentation.waitFor("verbose:")
-        # /api/work-presentation/getPersistentWorkId?corepoWorkId=
-        # http://work-presentation-service.cisterne.svc.cloud.dbc.dk/api/work-presentation/getPersistentWorkId?corepoWorkId=work%3A1
 
         work_mock = {
             "request": {
