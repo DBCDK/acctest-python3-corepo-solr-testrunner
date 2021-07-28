@@ -49,7 +49,7 @@ class ContainerPoolImpl(ContainerSuitePool):
 
         suite_name = "_corepo_solr_%f" % time.time()
 
-        corepo_db = suite.create_container("corepo-db", image_name=DockerContainer.secure_docker_image('corepo-postgresql-1.2'),
+        corepo_db = suite.create_container("corepo-db", image_name=DockerContainer.secure_docker_image('corepo-postgresql-1.4'),
                              name="corepo-db" + suite_name,
                              environment_variables={"POSTGRES_USER": "corepo",
                                                     "POSTGRES_PASSWORD": "corepo",
@@ -128,7 +128,7 @@ class ContainerPoolImpl(ContainerSuitePool):
         wiremock_load_vipcore_from_dir("http://%s:8080" % vipcore.get_ip(), self.resource_folder)
 
         corepo_content_service = suite.create_container("corepo-content-service",
-                                                        image_name=DockerContainer.secure_docker_image('corepo-content-service-1.2'),
+                                                        image_name=DockerContainer.secure_docker_image('corepo-content-service-1.4'),
                                                         name="corepo-content-service" + suite_name,
                                                         environment_variables={"COREPO_POSTGRES_URL": corepo_db_url,
                                                                                "VIPCORE_ENDPOINT": vip_url,
