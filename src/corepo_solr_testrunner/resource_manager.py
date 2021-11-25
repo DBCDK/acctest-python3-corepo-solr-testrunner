@@ -198,6 +198,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                 "EMPTY_QUEUE_SLEEP": "1s",
                                                                                 "LOG__dk_dbc": log_level,
                                                                                 "LOG__JavaScript_Logger": log_level,
+                                                                                "THREADS": "1",
                                                                                 "JAVA_MAX_HEAP_SIZE": "3G",
                                                                                 "QUEUE_WINDOW": "1000ms"},
                                                          volumes=volumes,
