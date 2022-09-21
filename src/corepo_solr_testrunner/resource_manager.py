@@ -94,30 +94,6 @@ class ContainerPoolImpl(ContainerSuitePool):
         corepo_solr.start()
         corepo_solr_ip = corepo_solr.get_ip()
 
-        work_presentation = suite.create_container("work_presentation", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
-                             name="work_presentation" + suite_name,
-                             start_timeout=1200)
-        work_presentation.start()
-        work_presentation_url = "http://%s:8080" % work_presentation.get_ip()
-
-        work_presentation.waitFor("verbose:")
-
-        work_mock = {
-            "request": {
-                "urlPattern": "/api/work-presentation/getPersistentWorkId\\?corepoWorkId=.*",
-                "method": "GET"
-            },
-            "response": {
-                "status": 200,
-                "headers": {
-                "Content-Type": "application/json"
-                },
-                "body": "work-of:foo"
-            }
-        }
-
-        os_python.common.net.url.doURL( work_presentation_url + "/__admin/mappings/new", data = json.dumps( work_mock ).encode('utf-8'), content_type = 'application/json', timeout=120 )
-
         vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
                              name="vipcore" + suite_name,
                              start_timeout=1200)
@@ -218,11 +194,9 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                                                   "SCAN_PROFILES": "",
                                                                                   "SCAN_DEFAULT_FIELDS": "",
                                                                                   "SOLR_APPID": "acceptancetest-doc-store-updater",
-                                                                                  "SOLR_URL": "http://%s:8983/solr/corepo=all-persistentWorkId" % corepo_solr_ip,
-                                                                                  "WORK_PRESENTATION_URL": "http://localhost:1/not-used",
+                                                                                  "SOLR_URL": "http://%s:8983/solr/corepo=all" % corepo_solr_ip,
                                                                                   "LOG__dk_dbc": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
-                                                                                  "WORK_PRESENTATION_ENDPOINT": work_presentation_url,
                                                                                   "VIPCORE_ENDPOINT": vip_url},
                                                            start_timeout=1200,
                                                            mem_limit=2048)
