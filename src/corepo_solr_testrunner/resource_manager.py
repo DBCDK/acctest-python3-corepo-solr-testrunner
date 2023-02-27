@@ -94,7 +94,7 @@ class ContainerPoolImpl(ContainerSuitePool):
         corepo_solr.start()
         corepo_solr_ip = corepo_solr.get_ip()
 
-        vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('os-wiremock-1.0-snapshot'),
+        vipcore = suite.create_container("vipcore", image_name=DockerContainer.secure_docker_image('wiremock'),
                              name="vipcore" + suite_name,
                              start_timeout=1200)
         vipcore.start()
