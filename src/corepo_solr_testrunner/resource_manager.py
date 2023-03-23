@@ -119,6 +119,7 @@ class ContainerPoolImpl(ContainerSuitePool):
                                                            name="solr-doc-store-service" + suite_name,
                                                            environment_variables={"ALLOW_NON_EMPTY_SCHEMA": "true",
                                                                                   "DOCSTORE_POSTGRES_URL": sds_db_url,
+                                                                                  "HAZELCAST_CLUSTER": "",
                                                                                   "LOG__dk_dbc": "TRACE",
                                                                                   #"LOG_LEVEL": "TRACE",
                                                                                   "JAVA_MAX_HEAP_SIZE": "2G",
