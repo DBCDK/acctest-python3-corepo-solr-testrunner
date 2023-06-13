@@ -147,9 +147,10 @@ class ContainerPoolImpl(ContainerSuitePool):
         logger.debug("configured resource %s" % (self.resource_config))
         # Use local javascript if .ini file set
         volumes = None
+        corepo_indexer_jsar = '/nashorn-js-corepo-indexer.jsar'
         if 'javascript' in self.resource_config:
-            # Copy to an other directory, or jscommon folder will be hidden
-            volumes={self.resource_config['javascript']: "/javascriptlocal"}
+            volumes={self.resource_config['javascript']: '/local.jsar'}
+            corepo_indexer_jsar = '/local.jsar'
             logger.debug("configured volumes %s" % (volumes))
 
         if 'loglevel' in self.resource_config:
@@ -163,17 +164,17 @@ class ContainerPoolImpl(ContainerSuitePool):
         corepo_content_service.waitFor("was successfully deployed in")
 
         corepo_indexer_worker = suite.create_container( "corepo-indexer-worker",
-                                                         image_name=DockerContainer.secure_docker_image('corepo-indexer-worker-1.1'),
+                                                         image_name=DockerContainer.secure_docker_image('corepo-indexer-worker'),
                                                          name="corepo-indexer-worker" + suite_name,
                                                          environment_variables={"COREPO_CONTENT_SERVICE_URL": "http://%s:8080" % (corepo_content_service_ip),
                                                                                 "COREPO_POSTGRES_URL": corepo_db_url,
                                                                                 "SOLR_DOC_STORE_URL": solr_doc_store_url,
                                                                                 "FORS_RIGHTS_URL": "http://localhost/forsRights/",
                                                                                 "VIPCORE_ENDPOINT": vip_url,
-                                                                                "SEARCH_PATH": "file:/javascriptlocal file:/javascript file:/javascript/standard-index-values",
+                                                                                "JSAR": corepo_indexer_jsar,
                                                                                 "QUEUES": "to-indexer",
                                                                                 "EMPTY_QUEUE_SLEEP": "1s",
-                                                                                "LOG__dk_dbc": log_level,
+                                                                                "LOG__dk_dbc": "DEBUG",
                                                                                 "LOG__JavaScript_Logger": log_level,
                                                                                 "THREADS": "1",
                                                                                 "JAVA_MAX_HEAP_SIZE": "3G",
