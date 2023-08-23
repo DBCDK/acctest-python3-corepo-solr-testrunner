@@ -226,8 +226,8 @@ class ContainerPoolImpl(ContainerSuitePool):
             #dump_file = open(dump_file_name,'w')
             #dump_file.write(json.dumps( "http://%s:8983/solr/corepo/select?q=*:*&wt=json" % container.get_ip(), indent=4))
             # Wipe SOLR
-            url = "http://%s:8983/solr/corepo/update?stream.body=<delete><query>*:*</query></delete>&commit=true" % container.get_ip()
-            logger.debug(requests.get(url))
+            url = "http://%s:8983/solr/corepo/update?commit=true" % container.get_ip()
+            logger.debug(requests.post(url, json='{"delete":{"query":"*:*"}}'))
         if name == "solr-doc-store-db":
             container.execute("psql -c 'TRUNCATE bibliographicsolrkeys CASCADE' sds")
             container.execute("psql -c 'TRUNCATE holdingsitemssolrkeys CASCADE' sds")
