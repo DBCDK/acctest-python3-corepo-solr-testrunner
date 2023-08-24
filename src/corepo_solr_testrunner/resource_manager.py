@@ -220,14 +220,13 @@ class ContainerPoolImpl(ContainerSuitePool):
         if name == "corepo-db":
             container.execute("psql -c \"SELECT PG_TERMINATE_BACKEND(pid) FROM pg_stat_activity WHERE state = 'idle in transaction'; TRUNCATE records CASCADE\" corepo")
         if name == "corepo-solr":
-            # Save a dump of solr data
-            #dump_file_name = container.log_file+".dump.json"
-            #logger.debug("Writing dump '%s'" % dump_file_name)
-            #dump_file = open(dump_file_name,'w')
-            #dump_file.write(json.dumps( "http://%s:8983/solr/corepo/select?q=*:*&wt=json" % container.get_ip(), indent=4))
             # Wipe SOLR
-            url = "http://%s:8983/solr/corepo/update?commit=true" % container.get_ip()
-            logger.debug(requests.post(url, json='{"delete":{"query":"*:*"}}'))
+            url = "http://%s:8983/solr/corepo/update" % container.get_ip()
+            jsondata = {"delete":{"query":"*:*"}, "commit": {}}
+            logger.debug("Wipe SOLR post: %s" % jsondata)
+            response = requests.post(url, json=jsondata)
+            logger.debug("Wipe SOLR response: %s" % response.text)
+
         if name == "solr-doc-store-db":
             container.execute("psql -c 'TRUNCATE bibliographicsolrkeys CASCADE' sds")
             container.execute("psql -c 'TRUNCATE holdingsitemssolrkeys CASCADE' sds")
