@@ -89,6 +89,7 @@ class ContainerPoolImpl(ContainerSuitePool):
 
         corepo_solr = suite.create_container("corepo-solr", image_name=DockerContainer.secure_docker_image('corepo-indexer-solr-1.1'),
                              name="corepo-solr" + suite_name,
+                             environment_variables={"SOLR_ENABLE_STREAM_BODY": "true"},
                              start_timeout=1200,
                              mem_limit=2048)
         corepo_solr.start()
